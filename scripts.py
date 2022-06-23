@@ -44,7 +44,7 @@ def create_commendation(name, subject):
     group_lesson = Lesson.objects.filter(subject__title__contains=school_subject.title,
                                            year_of_study=schoolkid.year_of_study,
                                            group_letter=schoolkid.group_letter
-                                           ).order_by('-date').first()
+                                           ).order_by('?').first()
     commendation = Commendation.objects.create(text=random_commendation.text,
                                                created=group_lesson.date,
                                                schoolkid=schoolkid,
