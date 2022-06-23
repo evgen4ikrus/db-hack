@@ -3,31 +3,34 @@ from random import randint
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 
-def checks_the_schoolkid(schoolkid):
+def get_schoolkid_by_name(name):
     try:
-        Schoolkid.objects.get(full_name__contains=schoolkid)
+        target_schoolkid = Schoolkid.objects.get(full_name__contains=name)
+        return target_schoolkid
+    
     except MultipleObjectsReturned:
-        exit(f'Найдено несколько учеников с именем {schoolkid}')
+        exit(f'Найдено несколько учеников с именем {name}')
     except ObjectDoesNotExist:
-        exit(f'Ученик с именем {schoolkid} не найден')
+        exit(f'Ученик с именем {name} не найден')
 
 
-def fix_marks(schoolkid):
-    checks_the_schoolkid(schoolkid)
-    bad_schoolkid_marks = Mark.objects.filter(schoolkid__full_name__contains=schoolkid, points__lte='4')  
+def fix_marks(name):
+    schoolkid = get_schoolkid_by_name(name)
+    bad_schoolkid_marks = Mark.objects.filter(schoolkid__full_name__contains=schoolkid.full_name,
+                                              points__lte='4')
     for mark in bad_schoolkid_marks:
         mark.points = randint(4, 5)
         mark.save()
 
 
-def emove_chastisements(schoolkid):
-    checks_the_schoolkid(schoolkid)
+def emove_chastisements(name):
+    schoolkid = get_schoolkid_by_name(name)
     chastisements = Chastisement.objects.filter(schoolkid__full_name__contains=schoolkid)
     chastisements.delete()
 
 
-def create_commendation(schoolkid, subject):
-    checks_the_schoolkid(schoolkid)
+def create_commendation(name, subject):
+    schoolkid = get_schoolkid_by_name(name)
     schoolkid = Schoolkid.objects.get(full_name__contains=schoolkid)
     random_commendation = Commendation.objects.all().order_by('?').first()
     subject = Subject.objects.get(title=subject, year_of_study=schoolkid.year_of_study)
