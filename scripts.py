@@ -12,6 +12,14 @@ def get_schoolkid_by_name(name):
         exit(f'Найдено несколько учеников с именем {name}')
     except ObjectDoesNotExist:
         exit(f'Ученик с именем {name} не найден')
+        
+
+def get_school_subject(subject, schoolkid):
+    try:
+        school_subject = Subject.objects.get(title=subject, year_of_study=schoolkid.year_of_study)
+        return school_subject
+    except ObjectDoesNotExist:
+        exit('Такого школьного предмета нет, проверьте написание')
 
 
 def fix_marks(name):
@@ -31,16 +39,15 @@ def emove_chastisements(name):
 
 def create_commendation(name, subject):
     schoolkid = get_schoolkid_by_name(name)
-    schoolkid = Schoolkid.objects.get(full_name__contains=schoolkid)
     random_commendation = Commendation.objects.all().order_by('?').first()
-    subject = Subject.objects.get(title=subject, year_of_study=schoolkid.year_of_study)
-    group_lesson = Lesson.objects.filter(subject__title__contains=subject.title,
+    school_subject = get_school_subject(subject, schoolkid)
+    group_lesson = Lesson.objects.filter(subject__title__contains=school_subject.title,
                                            year_of_study=schoolkid.year_of_study,
                                            group_letter=schoolkid.group_letter
                                            ).order_by('-date').first()
     commendation = Commendation.objects.create(text=random_commendation.text,
                                                created=group_lesson.date,
                                                schoolkid=schoolkid,
-                                               subject=subject,
+                                               subject=school_subject,
                                                teacher=group_lesson.teacher)
     commendation.save()
