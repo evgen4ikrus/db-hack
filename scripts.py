@@ -32,7 +32,7 @@ def fix_marks(name):
     schoolkid = get_schoolkid_by_name(name)
     bad_schoolkid_marks = Mark.objects.filter(
         schoolkid__full_name__contains=schoolkid.full_name,
-        points__lte='4'
+        points__lte='3'
         )
 
     for mark in bad_schoolkid_marks:
