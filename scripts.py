@@ -11,9 +11,9 @@ def get_schoolkid_by_name(name):
         return target_schoolkid
 
     except MultipleObjectsReturned:
-        exit(f'Найдено несколько учеников с именем {name}')
+        raise ValueError(f'Найдено несколько учеников с именем {name}')
     except ObjectDoesNotExist:
-        exit(f'Ученик с именем {name} не найден')
+        raise ValueError(f'Ученик с именем {name} не найден')
 
 
 def get_school_subject(subject, schoolkid):
@@ -25,7 +25,7 @@ def get_school_subject(subject, schoolkid):
 
         return school_subject
     except ObjectDoesNotExist:
-        exit('Такого школьного предмета нет, проверьте написание')
+        raise ValueError('Такого школьного предмета нет, проверьте написание')
 
 
 def fix_marks(name):
